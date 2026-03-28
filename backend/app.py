@@ -1,5 +1,5 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS, cross_origin
 import cv2
 import numpy as np
 import os
@@ -8,12 +8,13 @@ from utils.emotion import predict_emotion
 from utils.youtube_api import get_youtube_music
 from utils.spotify_api import get_spotify_music
 
-app = Flask(__name__)
-CORS(app, origins=["https://ai-emotion-based-music-content-reco.vercel.app"])
+app = Flask(__name__, static_folder="dist", static_url_path="")
+CORS(app)
 
 @app.route("/")
+@cross_origin()
 def home():
-    return "Backend running 🚀"
+    return send_from_directory(app.static_folder, "index.html")
 
 emotion_to_query = {
     "happy": "happy songs",
@@ -26,6 +27,7 @@ emotion_to_query = {
 }
 
 @app.route("/detect", methods=["POST"])
+@cross_origin()
 def detect():
     try:
         if "image" not in request.files:
