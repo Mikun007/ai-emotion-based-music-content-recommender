@@ -10,9 +10,6 @@ from utils.spotify_api import get_spotify_music
 app = Flask(__name__, static_folder="../frontend/dist", static_url_path="/")
 CORS(app, origins=["https://ai-emotion-based-music-content-reco.vercel.app"])
 
-@app.route("/")
-def home():
-    return send_from_directory(app.static_folder, "index.html")
 emotion_to_query = {
     "happy": "happy songs",
     "sad": "sad songs",
@@ -25,25 +22,40 @@ emotion_to_query = {
 
 @app.route("/detect", methods=["POST"])
 def detect():
-    file = request.files["image"]
-    img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
-
-    emotion = predict_emotion(img)
-    query = emotion_to_query[emotion]
-
-    youtube_songs = get_youtube_music(query)
-
-    # 🔥 Protect Spotify call
     try:
-        spotify_songs = get_spotify_music(query)
+        if "image" not in request.files:
+            return jsonify({"error": "No image uploaded"}), 400
+
+        file = request.files["image"]
+
+        img = cv2.imdecode(
+            np.frombuffer(file.read(), np.uint8),
+            cv2.IMREAD_COLOR
+        )
+
+        if img is None:
+            return jsonify({"error": "Invalid image"}), 400
+
+        emotion = predict_emotion(img)
+        query = emotion_to_query.get(emotion, "trending songs")
+
+        youtube_songs = get_youtube_music(query)
+
+        try:
+            spotify_songs = get_spotify_music(query)
+        except Exception as e:
+            print("Spotify crashed:", e)
+            spotify_songs = []
+
+        return jsonify({
+            "emotion": emotion,
+            "songs": youtube_songs,
+            "spotify": spotify_songs
+        })
+
     except Exception as e:
-        print("Spotify crashed:", e)
-        spotify_songs = []
-    return jsonify({
-        "emotion": emotion,
-        "songs": youtube_songs,
-        "spotify": spotify_songs
-    })
+        print("ERROR:", e)
+        return jsonify({"error": str(e)}), 500
 
 import os
 
