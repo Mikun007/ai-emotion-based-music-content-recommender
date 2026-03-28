@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import cv2
 import numpy as np
@@ -7,9 +7,12 @@ from utils.emotion import predict_emotion
 from utils.youtube_api import get_youtube_music
 from utils.spotify_api import get_spotify_music
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../frontend/dist", static_url_path="/")
 CORS(app)
 
+@app.route("/")
+def home():
+    return send_from_directory(app.static_folder, "index.html")
 emotion_to_query = {
     "happy": "happy songs",
     "sad": "sad songs",
@@ -42,5 +45,7 @@ def detect():
         "spotify": spotify_songs
     })
 
+import os
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

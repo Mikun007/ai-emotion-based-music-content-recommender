@@ -4,6 +4,8 @@ import EmotionDisplay from "./components/EmotionDisplay";
 import MusicList from "./components/MusicList";
 import { detectEmotion } from "./services/api";
 import Login from "./pages/Login";   // 👈 add this
+import "./App.css"
+import "./index.css"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 👈 new
