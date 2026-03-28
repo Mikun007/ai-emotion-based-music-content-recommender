@@ -34,7 +34,7 @@ def detect():
             return jsonify({"error": "No image uploaded"}), 400
 
         file = request.files["image"]
-        img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
+        # img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
         img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
         img = cv2.resize(img, (224, 224))  # or whatever your model expects
         if img is None:
