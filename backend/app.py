@@ -5,6 +5,7 @@ import numpy as np
 
 from utils.emotion import predict_emotion
 from utils.youtube_api import get_youtube_music
+from utils.spotify_api import get_spotify_music
 
 app = Flask(__name__)
 CORS(app)
@@ -26,11 +27,19 @@ def detect():
 
     emotion = predict_emotion(img)
     query = emotion_to_query[emotion]
-    songs = get_youtube_music(query)
 
+    youtube_songs = get_youtube_music(query)
+
+    # 🔥 Protect Spotify call
+    try:
+        spotify_songs = get_spotify_music(query)
+    except Exception as e:
+        print("Spotify crashed:", e)
+        spotify_songs = []
     return jsonify({
         "emotion": emotion,
-        "songs": songs
+        "songs": youtube_songs,
+        "spotify": spotify_songs
     })
 
 if __name__ == "__main__":
