@@ -52,7 +52,7 @@ def detect():
         except Exception as e:
             print("YouTube error:", e)
             youtube_songs = []
-
+        print("Received request:", request.files.keys())
         # Spotify protected
         # try:
         #     spotify_songs = get_spotify_music(query)
