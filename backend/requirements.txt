@@ -16,7 +16,7 @@ httpx==0.28.1
 idna==3.11
 kiwisolver==1.4.9
 matplotlib==3.10.8
-mediapipe==0.10.9
+mediapipe
 numpy==2.2.6
 ollama==0.6.1
 opencv-contrib-python==4.13.0.92
