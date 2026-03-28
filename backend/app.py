@@ -7,7 +7,7 @@ from utils.emotion import predict_emotion
 from utils.youtube_api import get_youtube_music
 from utils.spotify_api import get_spotify_music
 
-app = Flask(__name__, static_folder="../frontend/dist", static_url_path="/")
+app = Flask(__name__)
 CORS(app, origins=["https://ai-emotion-based-music-content-reco.vercel.app"])
 
 emotion_to_query = {
@@ -19,6 +19,10 @@ emotion_to_query = {
     "fear": "motivational music",
     "disgust": "chill songs"
 }
+
+@app.route("/")
+def home():
+    return "Backend running 🚀"
 
 @app.route("/detect", methods=["POST"])
 def detect():
