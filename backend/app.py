@@ -8,7 +8,7 @@ from utils.youtube_api import get_youtube_music
 from utils.spotify_api import get_spotify_music
 
 app = Flask(__name__, static_folder="../frontend/dist", static_url_path="/")
-CORS(app)
+CORS(app, origins=["https://ai-emotion-based-music-content-reco.vercel.app"])
 
 @app.route("/")
 def home():
