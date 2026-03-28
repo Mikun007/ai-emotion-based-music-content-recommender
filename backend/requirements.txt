@@ -41,3 +41,4 @@ Flask-Cors
 tensorflow
 requests
 opencv-python
+opencv-python-headless
