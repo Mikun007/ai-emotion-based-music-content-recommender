@@ -55,18 +55,18 @@ def detect():
             print("YouTube API error:", e)
             youtube_songs = []
 
-        # Get Spotify songs (if fails, just return empty list)
-        try:
-            spotify_songs = get_spotify_music(query)
-        except Exception as e:
-            print("Spotify API error:", e)
-            spotify_songs = []
+        # # Get Spotify songs (if fails, just return empty list)
+        # try:
+        #     spotify_songs = get_spotify_music(query)
+        # except Exception as e:
+        #     print("Spotify API error:", e)
+        #     spotify_songs = []
 
         # Always return YouTube songs even if Spotify fails
         return jsonify({
             "emotion": emotion,
             "songs": youtube_songs,
-            "spotify": spotify_songs
+            # "spotify": spotify_songs
         })
 
     except Exception as e:
