@@ -1,8 +1,14 @@
 import cv2
 import numpy as np
 from tensorflow.keras.models import load_model
+from huggingface_hub import hf_hub_download
 
-model = load_model("model/best_emotion_model.keras")
+model_path = hf_hub_download(
+    repo_id="Budhadev/best-emotion-model",
+    filename="best_emotion_model.keras"
+)
+
+model = load_model(model_path)
 
 emotion_labels = ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"]
 

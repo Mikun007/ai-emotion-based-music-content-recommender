@@ -1,10 +1,7 @@
 # 1. Base image
-FROM python:3.11-slim
+FROM python:3.10-slim
 
-# 2. Set working directory
-WORKDIR /app
-
-# 3. Install system dependencies needed by OpenCV
+# 2. Install system dependencies needed by OpenCV
 RUN apt-get update && apt-get install -y \
     build-essential \
     libgl1 \
@@ -15,15 +12,21 @@ RUN apt-get update && apt-get install -y \
     libx11-6 \
     && rm -rf /var/lib/apt/lists/*
 
+# 3/ Security: set up the hugging face user
+#RUN useradd -m -u 1000 user
+#USER user
+#ENV PATH="/home/user/.local/bin:$PATH"
+
+WORKDIR /app
+
 # 4. Copy and install Python dependencies
-COPY requirements.txt .
+COPY --chown=user requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 5. Copy the rest of the app
 COPY . .
 
-# 6. Expose port
-EXPOSE 8080
+EXPOSE 7860
 
 # 7. Run Flask
-CMD ["python", "app.py"]
+CMD ["gunicorn", "-b", "0.0.0.0:7860", "app:app"]
