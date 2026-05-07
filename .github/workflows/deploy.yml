@@ -1,41 +1,28 @@
+name: Build and Deploy Container
+
+on:
+  push:
+    branches: [ "main" ]
+
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: 'Login to Azure'
+        uses: azure/login@v1
         with:
-          python-version: '3.9'
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        working-directory: ./backend  # Path to your backend folder
-
-      # Zip only the backend folder content for deployment
-      - name: Zip artifact for deployment
-        run: zip -r ../release.zip .
-        working-directory: ./backend
-
-      - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v3
-        with:
-          name: python-app
-          path: release.zip
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: python-app
+      - name: 'Build and push image'
+        run: |
+          docker build -t your-registry.azurecr.io/backend-app:latest ./backend
+          docker push your-registry.azurecr.io/backend-app:latest
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'your-app-name'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: release.zip  # Deploys the content of your backend folder
+          app-name: 'your-app-service-name'
+          images: 'your-registry.azurecr.io/backend-app:latest'
